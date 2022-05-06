@@ -1,0 +1,6 @@
+*.o
+*.mod
+*.a
+HoursSince1900
+testHours
+yyyymmddhh_since_1900

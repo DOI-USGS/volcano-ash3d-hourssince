@@ -33,8 +33,8 @@
       ! https://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar
 
       !DO i = 1,876576  ! # of hours in a normal century
-      !DO i = 1,1884648  ! # of hours from 1800 to 2015
-      DO i = 1,8897303  ! # of hours from 1000 to 2015
+      DO i = 1,1884648  ! # of hours from 1800 to 2015
+      !DO i = 1,8897303  ! # of hours from 1000 to 2015
         HoursSince = real(i,kind=8)
         call HS_Get_YMDH(HoursSince,byear,useLeaps,iyear,imonth,iday,hours,idoy)
         hours2 = HS_hours_since_baseyear(iyear,imonth,iday,hours,byear,useLeaps)
