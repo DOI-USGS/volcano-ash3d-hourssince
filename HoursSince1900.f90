@@ -48,10 +48,20 @@
       integer              :: status
       real(kind=8)         :: hours
       real(kind=8)         :: hours_out
-      real(kind=8)         :: HS_hours_since_baseyear     ! function that calculates hours
 
       integer :: byear    = 1900
       logical :: useLeaps = .true.
+
+      INTERFACE
+        real(kind=8) function HS_hours_since_baseyear(iyear,imonth,iday,hours,byear,useLeaps)
+          integer     ,intent(in) :: iyear
+          integer     ,intent(in) :: imonth
+          integer     ,intent(in) :: iday
+          real(kind=8),intent(in) :: hours
+          integer     ,intent(in) :: byear
+          logical     ,intent(in) :: useLeaps
+        end function HS_hours_since_baseyear
+      END INTERFACE
 
 !     TEST READ COMMAND LINE ARGUMENTS
       nargs = command_argument_count()
