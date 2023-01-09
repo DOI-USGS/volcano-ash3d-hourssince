@@ -10,7 +10,6 @@
       integer            :: byear    = 1000
       logical            :: useLeaps = .true.
 
-      real(kind=8)       :: HS_hours_since_baseyear
       real(kind=8)       :: HoursSince
       real(kind=8)       :: hours2
 
@@ -25,6 +24,14 @@
           real(kind=8),intent(out)      :: hours
           integer     ,intent(out)      :: idoy
         end subroutine
+        real(kind=8) function HS_hours_since_baseyear(iyear,imonth,iday,hours,byear,useLeaps)
+          integer            :: iyear
+          integer            :: imonth
+          integer            :: iday
+          real(kind=8)       :: hours
+          integer            :: byear
+          logical            :: useLeaps
+        end function HS_hours_since_baseyear
       END INTERFACE
 
       ! Check against calculator on
@@ -43,6 +50,5 @@
           write(*,*)"ERROR",HoursSince,byear,useLeaps,iyear,imonth,iday,hours,idoy,hours2
         ENDIF
       ENDDO
-
 
       end program testHours
