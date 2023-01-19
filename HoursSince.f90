@@ -61,8 +61,9 @@
 
       implicit none
 
-      integer            :: iyear
-      logical            :: HS_IsLeapYear
+      integer,intent(in)  :: iyear
+
+      logical :: HS_IsLeapYear
 
       ! Note, this uses the proleptic Gregorian calendar which includes year 0
       ! and considers y=0 to be a leap year.
@@ -90,20 +91,25 @@
 
       implicit none
 
-      integer            :: iyear
-      integer            :: imonth
-      integer            :: iday
-      real(kind=8)       :: hours
-      integer            :: byear
-      logical            :: useLeaps
+      integer     ,intent(in) :: iyear
+      integer     ,intent(in) :: imonth
+      integer     ,intent(in) :: iday
+      real(kind=8),intent(in) :: hours
+      integer     ,intent(in) :: byear
+      logical     ,intent(in) :: useLeaps
 
       real(kind=8)       :: HS_hours_since_baseyear
-
                                    !cumulative hours in each month
       integer            :: i,ileaphours
       integer, dimension(0:12)  :: monthours     = (/0,744,1416,2160,2880,3624,4344,5088,5832,6552,7296,8016,8760/)
       logical :: IsLeap
-      logical :: HS_IsLeapYear
+
+      INTERFACE
+        logical function HS_IsLeapYear(iyear)
+          integer,intent(in)  :: iyear
+        end function HS_IsLeapYear
+      END INTERFACE
+
 
       ! First check input values
       if (iyear.lt.byear) then
@@ -223,8 +229,13 @@
       real(kind=8) :: rem_hours
       real(kind=8) :: InYear_Y0_OffsettHours
       logical :: IsLeap
-      logical :: HS_IsLeapYear
       real(kind=8) :: month_start_hours,month_end_hours
+
+      INTERFACE
+        logical function HS_IsLeapYear(iyear)
+          integer,intent(in)  :: iyear
+        end function HS_IsLeapYear
+      END INTERFACE
 
       ! Error checking the first argument
       ! Note: this must be real*8; if it was passed as real*4, then it will be
@@ -380,14 +391,17 @@
       function HS_xmltime(HoursSince,byear,useLeaps)
       
       implicit none
-      character (len=20)        :: HS_xmltime, string1
-      real(kind=8)              :: HoursSince
-      integer                   :: byear
-      logical                   :: useLeaps
 
-      integer                   :: iyear, imonth, iday, idoy
-      real(kind=8)              :: hours
-      integer                   :: ihours, iminutes, iseconds
+      real(kind=8)      ,intent(in) :: HoursSince
+      integer           ,intent(in) :: byear
+      logical           ,intent(in) :: useLeaps
+
+      character (len=20) :: HS_xmltime
+
+      character (len=20) :: string1
+      integer            :: iyear, imonth, iday, idoy
+      real(kind=8)       :: hours
+      integer            :: ihours, iminutes, iseconds
 
       INTERFACE
         subroutine HS_Get_YMDH(HoursSince,byear,useLeaps,iyear,imonth,iday,hours,idoy)
@@ -439,14 +453,16 @@
 
       function HS_yyyymmddhhmm_since(HoursSince,byear,useLeaps)
       
-
       implicit none
-      character (len=13)         ::  HS_yyyymmddhhmm_since, string1
-      character (len=1)          ::  string0                        ! a filler character
-      real(kind=8)               ::  HoursSince
-      integer                    ::  byear
-      logical                    ::  useLeaps
 
+      real(kind=8)   ,intent(in) ::  HoursSince
+      integer        ,intent(in) ::  byear
+      logical        ,intent(in) ::  useLeaps
+
+      character (len=13)         ::  HS_yyyymmddhhmm_since
+
+      character (len=1)          ::  string0                        ! a filler character
+      character (len=13)         ::  string1
       integer                    ::  iyear, imonth, iday, idoy
       real(kind=8)               ::  hours
 
@@ -487,6 +503,7 @@
       HS_yyyymmddhhmm_since = string1
       
       return
+
       end function HS_yyyymmddhhmm_since
 
 !##############################################################################
@@ -502,10 +519,11 @@
       
       implicit none
 
+      real(kind=8),intent(in)    ::  HoursSince
+      integer     ,intent(in)    ::  byear
+      logical     ,intent(in)    ::  useLeaps
+
       character (len=13)         ::  HS_yyyymmddhh_since
-      real(kind=8)               ::  HoursSince
-      integer                    ::  byear
-      logical                    ::  useLeaps
 
       integer                    ::  iyear, imonth, iday, idoy
       real(kind=8)               ::  hours
@@ -574,10 +592,11 @@
 
       implicit none
 
-      integer               :: HS_DayOfYear
-      real(kind=8)          :: HoursSince
-      integer               :: byear
-      logical               :: useLeaps
+      real(kind=8),intent(in) :: HoursSince
+      integer     ,intent(in) :: byear
+      logical     ,intent(in) :: useLeaps
+
+      integer                 :: HS_DayOfYear
 
       integer               ::  iyear, imonth, iday, idoy
       real(kind=8)          ::  hours
@@ -626,10 +645,11 @@
 
       implicit none
 
-      real(kind=8)          :: HS_HourOfDay
-      real(kind=8)          :: HoursSince
-      integer               :: byear
-      logical               :: useLeaps
+      real(kind=8),intent(in) :: HoursSince
+      integer     ,intent(in) :: byear
+      logical     ,intent(in) :: useLeaps
+
+      real(kind=8)            :: HS_HourOfDay
 
       integer               ::  iyear, imonth, iday, idoy
       real(kind=8)          ::  hours
@@ -678,10 +698,11 @@
 
       implicit none
 
-      integer            :: HS_YearOfEvent
-      real(kind=8)       :: HoursSince
-      integer            :: byear
-      logical            :: useLeaps
+      real(kind=8),intent(in) :: HoursSince
+      integer     ,intent(in) :: byear
+      logical     ,intent(in) :: useLeaps
+
+      integer                 :: HS_YearOfEvent
 
       integer               ::  iyear, imonth, iday, idoy
       real(kind=8)          ::  hours
@@ -730,10 +751,11 @@
 
       implicit none
 
-      integer          :: HS_MonthOfEvent
-      real(kind=8)     :: HoursSince
-      integer          :: byear
-      logical          :: useLeaps
+      real(kind=8),intent(in) :: HoursSince
+      integer     ,intent(in) :: byear
+      logical     ,intent(in) :: useLeaps
+
+      integer                 :: HS_MonthOfEvent
 
       integer               ::  iyear, imonth, iday, idoy
       real(kind=8)          ::  hours
@@ -782,10 +804,11 @@
 
       implicit none
 
-      integer         :: HS_DayOfEvent
-      real(kind=8)    :: HoursSince
-      integer         :: byear
-      logical         :: useLeaps
+      real(kind=8),intent(in) :: HoursSince
+      integer     ,intent(in) :: byear
+      logical     ,intent(in) :: useLeaps
+
+      integer                 :: HS_DayOfEvent
 
       integer               ::  iyear, imonth, iday, idoy
       real(kind=8)          ::  hours
@@ -820,5 +843,3 @@
       return
 
       end function HS_DayOfEvent
-
-
