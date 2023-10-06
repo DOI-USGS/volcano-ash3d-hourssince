@@ -38,8 +38,10 @@ SYSTEM = gfortran
 #    This variable cannot be left blank
 
 #RUN = DEBUG
+#RUN = DEBUGOMP
 #RUN = PROF
 RUN = OPT
+#RUN = OMPOPT
 #
 INSTALLDIR=/opt/USGS
 #INSTALLDIR=$(HOME)/intel
@@ -89,6 +91,9 @@ ifeq ($(SYSTEM), ifort)
 ifeq ($(RUN), DEBUG)
     FFLAGS = -g2 -pg -warn all -check all -real-size 64 -check uninit -traceback -ftrapuv -debug all
 endif
+ifeq ($(RUN), DEBUGOMP)
+    FFLAGS = -g2 -pg -warn all -check all -real-size 64 -check uninit -traceback -ftrapuv -debug all -openmp
+endif
 # Profiling flags
 ifeq ($(RUN), PROF)
     FFLAGS = -g2 -pg
@@ -96,6 +101,9 @@ endif
 # Production run flags
 ifeq ($(RUN), OPT)
     FFLAGS = -O3 -ftz -w -ipo
+endif
+ifeq ($(RUN), OMPOPT)
+    FFLAGS = -O3 -ftz -w -ipo -openmp
 endif
       # Extra flags
     EXFLAGS =
