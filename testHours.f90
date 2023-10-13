@@ -25,12 +25,12 @@
           integer     ,intent(out)      :: idoy
         end subroutine
         real(kind=8) function HS_hours_since_baseyear(iyear,imonth,iday,hours,byear,useLeaps)
-          integer            :: iyear
-          integer            :: imonth
-          integer            :: iday
-          real(kind=8)       :: hours
-          integer            :: byear
-          logical            :: useLeaps
+          integer     ,intent(in)       :: iyear
+          integer     ,intent(in)       :: imonth
+          integer     ,intent(in)       :: iday
+          real(kind=8),intent(in)       :: hours
+          integer     ,intent(in)       :: byear
+          logical     ,intent(in)       :: useLeaps
         end function HS_hours_since_baseyear
       END INTERFACE
 

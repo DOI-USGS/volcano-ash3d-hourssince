@@ -238,8 +238,7 @@
       END INTERFACE
 
       ! Error checking the first argument
-      ! Note: this must be real*8; if it was passed as real*4, then it will be
-      !        nonsense
+      ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
         write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
         write(0,*)"          than ~100,000 years."
@@ -417,8 +416,7 @@
       END INTERFACE
 
       ! Error checking the first argument
-      ! Note: this must be real*8; if it was passed as real*4, then it will be
-      !        nonsense
+      ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
         write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
         write(0,*)"          than ~100,000 years."
@@ -482,8 +480,7 @@
       END INTERFACE
 
       ! Error checking the first argument
-      ! Note: this must be real*8; if it was passed as real*4, then it will be
-      !        nonsense
+      ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
         write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
         write(0,*)"          than ~100,000 years."
@@ -546,8 +543,7 @@
       END INTERFACE
 
       ! Error checking the first argument
-      ! Note: this must be real*8; if it was passed as real*4, then it will be
-      !        nonsense
+      ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
         write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
         write(0,*)"          than ~100,000 years."
@@ -615,8 +611,7 @@
       END INTERFACE
 
       ! Error checking the first argument
-      ! Note: this must be real*8; if it was passed as real*4, then it will be
-      !        nonsense
+      ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
         write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
         write(0,*)"          than ~100,000 years."
@@ -668,8 +663,7 @@
       END INTERFACE
 
       ! Error checking the first argument
-      ! Note: this must be real*8; if it was passed as real*4, then it will be
-      !        nonsense
+      ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
         write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
         write(0,*)"          than ~100,000 years."
@@ -721,8 +715,7 @@
       END INTERFACE
 
       ! Error checking the first argument
-      ! Note: this must be real*8; if it was passed as real*4, then it will be
-      !        nonsense
+      ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
         write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
         write(0,*)"          than ~100,000 years."
@@ -774,8 +767,7 @@
       END INTERFACE
 
       ! Error checking the first argument
-      ! Note: this must be real*8; if it was passed as real*4, then it will be
-      !        nonsense
+      ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
         write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
         write(0,*)"          than ~100,000 years."
@@ -827,8 +819,7 @@
       END INTERFACE
 
       ! Error checking the first argument
-      ! Note: this must be real*8; if it was passed as real*4, then it will be
-      !        nonsense
+      ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
         write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
         write(0,*)"          than ~100,000 years."

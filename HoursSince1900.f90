@@ -34,7 +34,7 @@
 
 !     input iyear,imonth,iday,hours
       
-!     function that calculates the number of hours since 1900 of a year, month, day, and hour (UT)      
+!     program that calculates the number of hours since 1900 of a year, month, day, and hour (UT)      
       ! Check against calculator on
       ! http://www.7is7.com/otto/datediff.html
 
