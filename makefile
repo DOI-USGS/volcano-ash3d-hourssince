@@ -37,10 +37,9 @@ SYSTEM = gfortran
 #      PROF  : includes profiling flags with some optimization
 #    This variable cannot be left blank
 
-#RUN = DEBUG
-#RUN = DEBUGOMP
+RUN = DEBUG
 #RUN = PROF
-RUN = OPT
+#RUN = OPT
 #RUN = OMPOPT
 #
 INSTALLDIR=/opt/USGS
@@ -91,9 +90,9 @@ ifeq ($(SYSTEM), ifort)
 ifeq ($(RUN), DEBUG)
     FFLAGS = -g2 -pg -warn all -check all -real-size 64 -check uninit -traceback -ftrapuv -debug all
 endif
-ifeq ($(RUN), DEBUGOMP)
-    FFLAGS = -g2 -pg -warn all -check all -real-size 64 -check uninit -traceback -ftrapuv -debug all -openmp
-endif
+#ifeq ($(RUN), DEBUGOMP)
+#    FFLAGS = -g2 -pg -warn all -check all -real-size 64 -check uninit -traceback -ftrapuv -debug all -openmp
+#endif
 # Profiling flags
 ifeq ($(RUN), PROF)
     FFLAGS = -g2 -pg
