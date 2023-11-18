@@ -37,9 +37,9 @@ SYSTEM = gfortran
 #      PROF  : includes profiling flags with some optimization
 #    This variable cannot be left blank
 
-RUN = DEBUG
+#RUN = DEBUG
 #RUN = PROF
-#RUN = OPT
+RUN = OPT
 #RUN = OMPOPT
 #
 INSTALLDIR=/opt/USGS
@@ -138,6 +138,8 @@ yyyymmddhh_since_1900: yyyymmddhh_since_1900.f90 HoursSince.o
 	$(FC) $(FFLAGS) $(EXFLAGS) $(LIBS) yyyymmddhh_since_1900.f90 HoursSince.o -o yyyymmddhh_since_1900
 testHours: testHours.f90 HoursSince.o makefile
 	$(FC) $(FFLAGS) $(EXFLAGS) $(LIBS) testHours.f90 HoursSince.o -o testHours
+check: testHours HoursSince1900 makefile
+	sh check.sh
 
 clean:
 	rm -f *.o *__genmod.f90 *__genmod.mod

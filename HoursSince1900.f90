@@ -49,7 +49,7 @@
       real(kind=8)         :: hours
       real(kind=8)         :: hours_out
 
-      integer :: byear    = 1970
+      integer :: byear    = 1900
       logical :: useLeaps = .true.
 
       INTERFACE
