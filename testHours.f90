@@ -2,6 +2,9 @@
 
       implicit none
 
+      integer,parameter      :: NRAND      = 10000    ! Number of pseudo-random tests
+      real(kind=8),parameter :: HOURTHRESH = 0.01_8   ! Tolerance in hours for inverse functions
+
       integer            :: i
 
       integer            :: iyear,imonth
@@ -10,8 +13,12 @@
       integer            :: byear    = 1000
       logical            :: useLeaps = .true.
 
+      integer                          :: n
+      integer,allocatable,dimension(:) :: seed
+      real(kind=8)                     :: s_rand
       real(kind=8)       :: HoursSince
       real(kind=8)       :: hours2
+      logical            :: Check_failed
 
       INTERFACE
         subroutine HS_Get_YMDH(HoursSince,byear,useLeaps,iyear,imonth,iday,hours,idoy)
@@ -39,16 +46,34 @@
       ! Use the Proleptic Gregorian calendar
       ! https://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar
 
-      !DO i = 1,876576  ! # of hours in a normal century
-      DO i = 1,1884648  ! # of hours from 1800 to 2015
-      !DO i = 1,8897303  ! # of hours from 1000 to 2015
-        HoursSince = real(i,kind=8)
+      write(*,*)"Verifying that HS_Get_YMDH and HS_hours_since_baseyear are inverses"
+      write(*,*)"for 10000 random times between 1000 and 2015"
+
+      Check_failed = .false.
+      call random_seed(size=n)
+      allocate(seed(n))
+      seed(:) = 123456789
+      call random_seed(put=seed)
+      deallocate(seed)
+
+      do i = 1,NRAND
+        call random_number(s_rand)
+        ! scale s_rand to the range byear-> 2015
+        HoursSince = s_rand*8760.0_8*real((2015-byear),kind=8)
         call HS_Get_YMDH(HoursSince,byear,useLeaps,iyear,imonth,iday,hours,idoy)
         hours2 = HS_hours_since_baseyear(iyear,imonth,iday,hours,byear,useLeaps)
-        write(*,*)"     ",HoursSince,byear,useLeaps,iyear,imonth,iday,hours,idoy,hours2
-        IF(abs(HoursSince-hours2).gt.0.01)THEN
+        if(abs(HoursSince-hours2).gt.HOURTHRESH)then
+          Check_failed = .true.
           write(*,*)"ERROR",HoursSince,byear,useLeaps,iyear,imonth,iday,hours,idoy,hours2
-        ENDIF
-      ENDDO
+        endif
+      enddo
+
+      if(Check_failed)then
+        write(*,*)"volcano-ash3d-hourssince internal check: FAIL"
+        stop 1
+      else
+        write(*,*)"volcano-ash3d-hourssince internal check: PASS"
+        stop 0
+      endif
 
       end program testHours

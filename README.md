@@ -22,6 +22,15 @@ To compile these wrapper programs, type:
 
   `make tools`
 
+To test the library, type:
+
+  `make check`
+
+This will run two tests.  The first, the self-test program `testHours` which
+verifies internal consistency of the subroutines.  Second, the program
+`HoursSince1900` is used to calculate hour differences between random date
+pairs, with a comparison to the calculation using the unix `date` command.
+
 To install the library, edit the `INSTALLDIR` variable of the makefile (the
 default is `/opt/USGS`) and type:
 
