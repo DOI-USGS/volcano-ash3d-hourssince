@@ -41,8 +41,8 @@
         end function HS_hours_since_baseyear
       END INTERFACE
 
-      ! Check against calculator on
-      ! http://www.7is7.com/otto/datediff.html
+      ! You can always check against calculator on:
+      !   http://www.7is7.com/otto/datediff.html
       ! Use the Proleptic Gregorian calendar
       ! https://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar
 
