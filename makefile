@@ -25,11 +25,12 @@
 
 #  SYSTEM specifies which compiler to use
 #    Current available options are:
-#      gfortran , ifort
+#      gfortran , ifort , aocc
 #    This variable cannot be left blank
 #      
 SYSTEM = gfortran
 #SYSTEM = ifort
+#SYSTEM = aocc
 #
 #  RUN specifies which collection of compilation flags that should be run
 #    Current available options are:
@@ -37,78 +38,35 @@ SYSTEM = gfortran
 #      PROF  : includes profiling flags with some optimization
 #    This variable cannot be left blank
 
-#RUN = DEBUG
+RUN = DEBUG
 #RUN = PROF
-RUN = OPT
+#RUN = OPT
 #RUN = OMPOPT
 #
 INSTALLDIR=/opt/USGS
 #INSTALLDIR=$(HOME)/intel
+#INSTALLDIR=$(HOME)/aocc
 
 ###############################################################################
 #####  END OF USER SPECIFIED FLAGS  ###########################################
 ###############################################################################
 
-
-
-###############################################################################
-###############################################################################
-
 ###############################################################################
 ##########  GNU Fortran Compiler  #############################################
 ifeq ($(SYSTEM), gfortran)
-    FCHOME=/usr
-    FC = /usr/bin/gfortran
-    COMPINC = -I./ -I$(FCHOME)/include -I$(FCHOME)/lib64/gfortran/modules
-    COMPLIBS = -L./ -L$(FCHOME)/lib64
-    LIBS = $(COMPLIBS) $(COMPINC)
-
-# Debugging flags
-ifeq ($(RUN), DEBUG)
-    FFLAGS = -O0 -g3 -Wall -Wextra -fimplicit-none  -Wall  -Wline-truncation  -Wcharacter-truncation  -Wsurprising  -Waliasing  -Wimplicit-interface  -Wunused-parameter  -fwhole-file  -fcheck=all  -std=f2008  -pedantic  -fbacktrace -Wunderflow -ffpe-trap=invalid,zero,overflow -fdefault-real-8
-endif
-# Profiling flags
-ifeq ($(RUN), PROF)
-    FFLAGS = -g -pg -w -fno-math-errno -funsafe-math-optimizations -fno-trapping-math -fno-signaling-nans -fcx-limited-range -fno-rounding-math -fdefault-real-8
-endif
-# Production run flags
-ifeq ($(RUN), OPT)
-    FFLAGS = -O3 -w -fno-math-errno -funsafe-math-optimizations -fno-trapping-math -fno-signaling-nans -fcx-limited-range -fno-rounding-math -fdefault-real-8
-endif
-    EXFLAGS =
+  include make_gfortran.inc
 endif
 ###############################################################################
-##########  Intel Fortran Compiler  #############################################
+##########  Intel Fortran Compiler  ###########################################
 ifeq ($(SYSTEM), ifort)
-    FCHOME = /opt/intel/oneapi/compiler/latest/linux/
-    FC = $(FCHOME)/bin/intel64/ifort
-    COMPINC = -I./ -I$(FCHOME)/include
-    COMPLIBS = -L./ -L$(FCHOME)/lib
-    LIBS = $(COMPLIBS) $(COMPINC)
-
-# Debugging flags
-ifeq ($(RUN), DEBUG)
-    FFLAGS = -g2 -pg -warn all -check all -real-size 64 -check uninit -traceback -ftrapuv -debug all
-endif
-#ifeq ($(RUN), DEBUGOMP)
-#    FFLAGS = -g2 -pg -warn all -check all -real-size 64 -check uninit -traceback -ftrapuv -debug all -openmp
-#endif
-# Profiling flags
-ifeq ($(RUN), PROF)
-    FFLAGS = -g2 -pg
-endif
-# Production run flags
-ifeq ($(RUN), OPT)
-    FFLAGS = -O3 -ftz -w -ipo
-endif
-ifeq ($(RUN), OMPOPT)
-    FFLAGS = -O3 -ftz -w -ipo -openmp
-endif
-      # Extra flags
-    EXFLAGS =
+  include make_ifort.inc
 endif
 ###############################################################################
-
+##########  AMD Optimizing C/C++/Fortran Compiler (aocc) ######################
+ifeq ($(SYSTEM), aocc)
+  include make_aocc.inc
+endif
+###############################################################################
 
 LIB = libhourssince.a
 
