@@ -23,49 +23,44 @@
 #      and its documentation for any purpose.  We assume no responsibility to provide
 #      technical support to users of this software.
 
+#      Sequence of commands:
+#      "make"  compiles the libhourssince.a library
+#      "make all" builds the library, and the tools executables
+#      "make check" runs two test cases
+#      "make install" copies the library to the install location
+#                        e.g. /opt/USGS
+#
 #  SYSTEM specifies which compiler to use
 #    Current available options are:
 #      gfortran , ifort , aocc
 #    This variable cannot be left blank
 #      
 SYSTEM = gfortran
-#SYSTEM = ifort
-#SYSTEM = aocc
+SYSINC = make_gfortran.inc
 #
 #  RUN specifies which collection of compilation flags that should be run
 #    Current available options are:
 #      DEBUG : includes debugging info and issues warnings
 #      PROF  : includes profiling flags with some optimization
+#      OPT   : includes optimizations flags for fastest runtime
 #    This variable cannot be left blank
 
-RUN = DEBUG
+#RUN = DEBUG
 #RUN = PROF
-#RUN = OPT
-#RUN = OMPOPT
+RUN = OPT
 #
 INSTALLDIR=/opt/USGS
-#INSTALLDIR=$(HOME)/intel
-#INSTALLDIR=$(HOME)/aocc
 
 ###############################################################################
 #####  END OF USER SPECIFIED FLAGS  ###########################################
 ###############################################################################
 
 ###############################################################################
-##########  GNU Fortran Compiler  #############################################
-ifeq ($(SYSTEM), gfortran)
-  include make_gfortran.inc
-endif
-###############################################################################
-##########  Intel Fortran Compiler  ###########################################
-ifeq ($(SYSTEM), ifort)
-  include make_ifort.inc
-endif
-###############################################################################
-##########  AMD Optimizing C/C++/Fortran Compiler (aocc) ######################
-ifeq ($(SYSTEM), aocc)
-  include make_aocc.inc
-endif
+# Import the compiler-specific include file.  Currently one of:
+#  GNU Fortran Compiler
+#  Intel Fortran Compiler
+#  AMD Optimizing C/C++/Fortran Compiler (aocc)
+include $(SYSINC)
 ###############################################################################
 
 LIB = libhourssince.a
@@ -84,19 +79,19 @@ tools: $(EXEC)
 
 test: testHours
 
-all: libhourssince.a $(EXEC) makefile testHours
+all: libhourssince.a $(EXEC) makefile $(SYSINC) testHours
 
-libhourssince.a: HoursSince.f90 HoursSince.o makefile
+libhourssince.a: HoursSince.f90 HoursSince.o makefile $(SYSINC)
 	ar rcs libhourssince.a HoursSince.o
-HoursSince.o: HoursSince.f90 makefile
+HoursSince.o: HoursSince.f90 makefile $(SYSINC)
 	$(FC) $(FFLAGS) $(EXFLAGS) $(LIBS) -c HoursSince.f90
-HoursSince1900: HoursSince1900.f90 HoursSince.o
+HoursSince1900: HoursSince1900.f90 HoursSince.o $(SYSINC)
 	$(FC) $(FFLAGS) $(EXFLAGS) $(LIBS) HoursSince1900.f90 HoursSince.o -o HoursSince1900
 yyyymmddhh_since_1900: yyyymmddhh_since_1900.f90 HoursSince.o
 	$(FC) $(FFLAGS) $(EXFLAGS) $(LIBS) yyyymmddhh_since_1900.f90 HoursSince.o -o yyyymmddhh_since_1900
-testHours: testHours.f90 HoursSince.o makefile
+testHours: testHours.f90 HoursSince.o makefile $(SYSINC)
 	$(FC) $(FFLAGS) $(EXFLAGS) $(LIBS) testHours.f90 HoursSince.o -o testHours
-check: testHours HoursSince1900 makefile
+check: testHours HoursSince1900 makefile $(SYSINC)
 	sh check.sh
 
 clean:
