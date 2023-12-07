@@ -23,92 +23,45 @@
 #      and its documentation for any purpose.  We assume no responsibility to provide
 #      technical support to users of this software.
 
+#      Sequence of commands:
+#      "make"  compiles the libhourssince.a library
+#      "make all" builds the library, and the tools executables
+#      "make check" runs two test cases
+#      "make install" copies the library to the install location
+#                        e.g. /opt/USGS
+#
 #  SYSTEM specifies which compiler to use
 #    Current available options are:
-#      gfortran , ifort
+#      gfortran , ifort , aocc
 #    This variable cannot be left blank
 #      
 SYSTEM = gfortran
-#SYSTEM = ifort
+SYSINC = make_gfortran.inc
 #
 #  RUN specifies which collection of compilation flags that should be run
 #    Current available options are:
 #      DEBUG : includes debugging info and issues warnings
 #      PROF  : includes profiling flags with some optimization
+#      OPT   : includes optimizations flags for fastest runtime
 #    This variable cannot be left blank
 
 #RUN = DEBUG
 #RUN = PROF
 RUN = OPT
-#RUN = OMPOPT
 #
 INSTALLDIR=/opt/USGS
-#INSTALLDIR=$(HOME)/intel
 
 ###############################################################################
 #####  END OF USER SPECIFIED FLAGS  ###########################################
 ###############################################################################
 
-
-
 ###############################################################################
+# Import the compiler-specific include file.  Currently one of:
+#  GNU Fortran Compiler
+#  Intel Fortran Compiler
+#  AMD Optimizing C/C++/Fortran Compiler (aocc)
+include $(SYSINC)
 ###############################################################################
-
-###############################################################################
-##########  GNU Fortran Compiler  #############################################
-ifeq ($(SYSTEM), gfortran)
-    FCHOME=/usr
-    FC = /usr/bin/gfortran
-    COMPINC = -I./ -I$(FCHOME)/include -I$(FCHOME)/lib64/gfortran/modules
-    COMPLIBS = -L./ -L$(FCHOME)/lib64
-    LIBS = $(COMPLIBS) $(COMPINC)
-
-# Debugging flags
-ifeq ($(RUN), DEBUG)
-    FFLAGS = -O0 -g3 -Wall -Wextra -fimplicit-none  -Wall  -Wline-truncation  -Wcharacter-truncation  -Wsurprising  -Waliasing  -Wimplicit-interface  -Wunused-parameter  -fwhole-file  -fcheck=all  -std=f2008  -pedantic  -fbacktrace -Wunderflow -ffpe-trap=invalid,zero,overflow -fdefault-real-8
-endif
-# Profiling flags
-ifeq ($(RUN), PROF)
-    FFLAGS = -g -pg -w -fno-math-errno -funsafe-math-optimizations -fno-trapping-math -fno-signaling-nans -fcx-limited-range -fno-rounding-math -fdefault-real-8
-endif
-# Production run flags
-ifeq ($(RUN), OPT)
-    FFLAGS = -O3 -w -fno-math-errno -funsafe-math-optimizations -fno-trapping-math -fno-signaling-nans -fcx-limited-range -fno-rounding-math -fdefault-real-8
-endif
-    EXFLAGS =
-endif
-###############################################################################
-##########  Intel Fortran Compiler  #############################################
-ifeq ($(SYSTEM), ifort)
-    FCHOME = /opt/intel/oneapi/compiler/latest/linux/
-    FC = $(FCHOME)/bin/intel64/ifort
-    COMPINC = -I./ -I$(FCHOME)/include
-    COMPLIBS = -L./ -L$(FCHOME)/lib
-    LIBS = $(COMPLIBS) $(COMPINC)
-
-# Debugging flags
-ifeq ($(RUN), DEBUG)
-    FFLAGS = -g2 -pg -warn all -check all -real-size 64 -check uninit -traceback -ftrapuv -debug all
-endif
-#ifeq ($(RUN), DEBUGOMP)
-#    FFLAGS = -g2 -pg -warn all -check all -real-size 64 -check uninit -traceback -ftrapuv -debug all -openmp
-#endif
-# Profiling flags
-ifeq ($(RUN), PROF)
-    FFLAGS = -g2 -pg
-endif
-# Production run flags
-ifeq ($(RUN), OPT)
-    FFLAGS = -O3 -ftz -w -ipo
-endif
-ifeq ($(RUN), OMPOPT)
-    FFLAGS = -O3 -ftz -w -ipo -openmp
-endif
-      # Extra flags
-    EXFLAGS =
-endif
-###############################################################################
-
 
 LIB = libhourssince.a
 
@@ -126,19 +79,19 @@ tools: $(EXEC)
 
 test: testHours
 
-all: libhourssince.a $(EXEC) makefile testHours
+all: libhourssince.a $(EXEC) makefile $(SYSINC) testHours
 
-libhourssince.a: HoursSince.f90 HoursSince.o makefile
+libhourssince.a: HoursSince.f90 HoursSince.o makefile $(SYSINC)
 	ar rcs libhourssince.a HoursSince.o
-HoursSince.o: HoursSince.f90 makefile
+HoursSince.o: HoursSince.f90 makefile $(SYSINC)
 	$(FC) $(FFLAGS) $(EXFLAGS) $(LIBS) -c HoursSince.f90
-HoursSince1900: HoursSince1900.f90 HoursSince.o
+HoursSince1900: HoursSince1900.f90 HoursSince.o $(SYSINC)
 	$(FC) $(FFLAGS) $(EXFLAGS) $(LIBS) HoursSince1900.f90 HoursSince.o -o HoursSince1900
 yyyymmddhh_since_1900: yyyymmddhh_since_1900.f90 HoursSince.o
 	$(FC) $(FFLAGS) $(EXFLAGS) $(LIBS) yyyymmddhh_since_1900.f90 HoursSince.o -o yyyymmddhh_since_1900
-testHours: testHours.f90 HoursSince.o makefile
+testHours: testHours.f90 HoursSince.o makefile $(SYSINC)
 	$(FC) $(FFLAGS) $(EXFLAGS) $(LIBS) testHours.f90 HoursSince.o -o testHours
-check: testHours HoursSince1900 makefile
+check: testHours HoursSince1900 makefile $(SYSINC)
 	sh check.sh
 
 clean:
