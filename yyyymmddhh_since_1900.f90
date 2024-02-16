@@ -48,6 +48,9 @@
       real(kind=8)         ::  fraction, hour
       integer              ::  nargs
 
+      integer :: iostatus
+      character(len=120) :: iomessage
+
       integer :: byear    = 1900
       logical :: useLeaps = .true.
 
@@ -73,7 +76,16 @@
         stop
       else
         call get_command_argument(1, linebuffer, status)
-        read(linebuffer,*) HoursSince1900
+        read(linebuffer,*,iostat=iostatus,iomsg=iomessage) HoursSince1900
+        if(iostatus.ne.0)then
+          write(6,*)'HS ERROR:  Error reading value from command-line argument'
+          write(6,*)'           Expecting to read: HoursSince1900 (real*8)'
+          write(6,*)'           From the following input line : '
+          write(6,*)linebuffer
+          write(6,*)'HS System Message: '
+          write(6,*)iomessage
+          stop 1
+        endif
       endif
 
       call HS_Get_YMDH(HoursSince1900,byear,useLeaps,iyear,imonth,iday,hour,idoy)
