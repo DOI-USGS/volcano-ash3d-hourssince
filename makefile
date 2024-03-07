@@ -49,6 +49,11 @@ SYSINC = make_gfortran.inc
 #RUN = PROF
 RUN = OPT
 #
+#    This variable cannot be left blank
+#OS = LINUX
+OS = MACOS
+#OS = WINDOWS
+
 INSTALLDIR=/opt/USGS
 
 ###############################################################################

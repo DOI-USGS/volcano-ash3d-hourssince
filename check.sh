@@ -67,17 +67,15 @@ do
   DoY1=${d1%.*}
   h1=12.0
   if [ $GNUDATE -eq 1 ];then
-    echo "gnu date (linux)"
     date1=`date --date="${YYYY1}/1/1 + ${DoY1} days" +%F`
     MM1=`date '+%m' -d "${date1} 12:00:00 UTC"`
     DD1=`date '+%d' -d "${date1} 12:00:00 UTC"`
     u1=$(date '+%s' -d "${date1} 12:00:00 UTC")   # unix time in seconds
   else
-    echo "BSD date (Mac)"
     date1=`date -v${YYYY1}y -v1m -v1d -v0H -v0M -v0S -v+${DoY1}d -u +%F`
-    MM1=`date -j -f "%Y-%m-%d %H:%M:%S" "${date1} 12:00:00"  +%m`
-    DD1=`date -j -f "%Y-%m-%d %H:%M:%S" "${date1} 12:00:00"  +%d`
-    u1=$(`date -j -f "%Y-%m-%d %H:%M:%S" "${date1} 12:00:00"  +%s`)   # unix time in seconds
+    MM1=`TZ=UTC date -j -f "%Y-%m-%d %H:%M:%S" "${date1} 12:00:00"  +%m`
+    DD1=`TZ=UTC date -j -f "%Y-%m-%d %H:%M:%S" "${date1} 12:00:00"  +%d`
+    u1=`TZ=UTC date -j -f "%Y-%m-%d %H:%M:%S" "${date1} 12:00:00"  +%s`   # unix time in seconds
   fi
   U1=$(echo "$((u1))/3600.0" | bc -l)       # unix time in hours
   
@@ -89,17 +87,15 @@ do
   DoY2=${d2%.*}
   h2=12.0
   if [ $GNUDATE -eq 1 ];then
-    echo "gnu date (linux)"
     date2=`date --date="${YYYY2}/1/1 + ${DoY2} days" +%F`
     MM2=`date '+%m' -d "${date2} 12:00:00 UTC"`
     DD2=`date '+%d' -d "${date2} 12:00:00 UTC"`
     u2=$(date '+%s' -d "${date2} 12:00:00 UTC")   # unix time in seconds
   else
-    echo "BSD date (Mac)"
     date2=`date -v${YYYY2}y -v1m -v1d -v0H -v0M -v0S -v+${DoY1}d -u +%F`
-    MM2=`date -j -f "%Y-%m-%d %H:%M:%S" "${date2} 12:00:00"  +%m`
-    DD2=`date -j -f "%Y-%m-%d %H:%M:%S" "${date2} 12:00:00"  +%d`
-    u2=$(`date -j -f "%Y-%m-%d %H:%M:%S" "${date2} 12:00:00"  +%s`)   # unix time in seconds
+    MM2=`TZ=UTC date -j -f "%Y-%m-%d %H:%M:%S" "${date2} 12:00:00"  +%m`
+    DD2=`TZ=UTC date -j -f "%Y-%m-%d %H:%M:%S" "${date2} 12:00:00"  +%d`
+    u2=`TZ=UTC date -j -f "%Y-%m-%d %H:%M:%S" "${date2} 12:00:00"  +%s`   # unix time in seconds
   fi
   U2=$(echo "$((u2))/3600.0" | bc -l)       # unix time in hours
   # Now calculate the difference in hours to the two unix times
@@ -113,8 +109,12 @@ do
   HSdifH=$(echo "$t2 - $t1" | bc -l)
   # Get the absolute value of the difference in hours between the two measures (should be 0)
   Hdiff=`echo "sqrt(($udifH - $HSdifH)^2)" | bc -l`
-  # increment error code with this difference
-  rc=$((rc + Hdiff))
+  st=`echo "$Hdiff > 0.01" | bc`
+  if [ $st -eq 1 ]; then
+    # increment error code
+    rc=$((rc + 1))
+  fi
+  
 done
 if [[ "$rc" -ne 0 ]] ; then
     printf " ---> ${RED}FAIL${NC}\n"
