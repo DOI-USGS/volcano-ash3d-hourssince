@@ -49,6 +49,11 @@ SYSINC = make_gfortran.inc
 #RUN = PROF
 RUN = OPT
 #
+#    This variable cannot be left blank
+#OS = LINUX
+OS = MACOS
+#OS = WINDOWS
+
 INSTALLDIR=/opt/USGS
 
 ###############################################################################
@@ -92,7 +97,7 @@ yyyymmddhh_since_1900: yyyymmddhh_since_1900.f90 HoursSince.o
 testHours: testHours.f90 HoursSince.o makefile $(SYSINC)
 	$(FC) $(FFLAGS) $(EXFLAGS) $(LIBS) testHours.f90 HoursSince.o -o testHours
 check: testHours HoursSince1900 makefile $(SYSINC)
-	sh check.sh
+	bash check.sh
 
 clean:
 	rm -f *.o *__genmod.f90 *__genmod.mod

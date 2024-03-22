@@ -22,7 +22,14 @@ if [[ "$rc" -gt 0 ]] ; then
   echo "       date is needed as an independent check on time calculations."
   exit 1
 fi
-
+# We now need to know if we are using GNU date or the BSD flavor
+if date --version >/dev/null 2>&1 ; then
+    echo "gnu date (linux)"
+    GNUDATE=1
+else
+    echo "BSD date (Mac)"
+    GNUDATE=0
+fi
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
@@ -58,11 +65,18 @@ do
   YYYY1=${y1%.*}
   d1=$(echo "1+$((x2))/32767.0*364.0" | bc -l)   # This skips Dec 31 of all leap years
   DoY1=${d1%.*}
-  date1=`date --date="${YYYY1}/1/1 + ${DoY1} days" +%F`
-  MM1=`date '+%m' -d "${date1} 12:00:00 UTC"`
-  DD1=`date '+%d' -d "${date1} 12:00:00 UTC"`
   h1=12.0
-  u1=$(date '+%s' -d "${date1} 12:00:00 UTC")   # unix time in seconds
+  if [ $GNUDATE -eq 1 ];then
+    date1=`date --date="${YYYY1}/1/1 + ${DoY1} days" +%F`
+    MM1=`date '+%m' -d "${date1} 12:00:00 UTC"`
+    DD1=`date '+%d' -d "${date1} 12:00:00 UTC"`
+    u1=$(date '+%s' -d "${date1} 12:00:00 UTC")   # unix time in seconds
+  else
+    date1=`date -v${YYYY1}y -v1m -v1d -v0H -v0M -v0S -v+${DoY1}d -u +%F`
+    MM1=`TZ=UTC date -j -f "%Y-%m-%d %H:%M:%S" "${date1} 12:00:00"  +%m`
+    DD1=`TZ=UTC date -j -f "%Y-%m-%d %H:%M:%S" "${date1} 12:00:00"  +%d`
+    u1=`TZ=UTC date -j -f "%Y-%m-%d %H:%M:%S" "${date1} 12:00:00"  +%s`   # unix time in seconds
+  fi
   U1=$(echo "$((u1))/3600.0" | bc -l)       # unix time in hours
   
   x1=$RANDOM   # random number (0->32767) for year
@@ -71,11 +85,18 @@ do
   YYYY2=${y2%.*}
   d2=$(echo "1+$((x2))/32767.0*364.0" | bc -l)   # This skips Dec 31 of all leap years
   DoY2=${d2%.*}
-  date2=`date --date="${YYYY2}/1/1 + ${DoY2} days" +%F`
-  MM2=`date '+%m' -d "${date2} 12:00:00 UTC"`
-  DD2=`date '+%d' -d "${date2} 12:00:00 UTC"`
   h2=12.0
-  u2=$(date '+%s' -d "${date2} 12:00:00 UTC")   # unix time in seconds
+  if [ $GNUDATE -eq 1 ];then
+    date2=`date --date="${YYYY2}/1/1 + ${DoY2} days" +%F`
+    MM2=`date '+%m' -d "${date2} 12:00:00 UTC"`
+    DD2=`date '+%d' -d "${date2} 12:00:00 UTC"`
+    u2=$(date '+%s' -d "${date2} 12:00:00 UTC")   # unix time in seconds
+  else
+    date2=`date -v${YYYY2}y -v1m -v1d -v0H -v0M -v0S -v+${DoY1}d -u +%F`
+    MM2=`TZ=UTC date -j -f "%Y-%m-%d %H:%M:%S" "${date2} 12:00:00"  +%m`
+    DD2=`TZ=UTC date -j -f "%Y-%m-%d %H:%M:%S" "${date2} 12:00:00"  +%d`
+    u2=`TZ=UTC date -j -f "%Y-%m-%d %H:%M:%S" "${date2} 12:00:00"  +%s`   # unix time in seconds
+  fi
   U2=$(echo "$((u2))/3600.0" | bc -l)       # unix time in hours
   # Now calculate the difference in hours to the two unix times
   udifH=$(echo "$((u2-u1))/3600.0" | bc -l )
@@ -88,8 +109,12 @@ do
   HSdifH=$(echo "$t2 - $t1" | bc -l)
   # Get the absolute value of the difference in hours between the two measures (should be 0)
   Hdiff=`echo "sqrt(($udifH - $HSdifH)^2)" | bc -l`
-  # increment error code with this difference
-  rc=$((rc + Hdiff))
+  st=`echo "$Hdiff > 0.01" | bc`
+  if [ $st -eq 1 ]; then
+    # increment error code
+    rc=$((rc + 1))
+  fi
+  
 done
 if [[ "$rc" -ne 0 ]] ; then
     printf " ---> ${RED}FAIL${NC}\n"
