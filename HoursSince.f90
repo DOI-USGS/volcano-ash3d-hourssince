@@ -102,11 +102,12 @@
       integer     ,intent(in) :: byear
       logical     ,intent(in) :: useLeaps
 
-      real(kind=8)       :: HS_hours_since_baseyear
+      real(kind=8)             :: HS_hours_since_baseyear
                                    !cumulative hours in each month
-      integer            :: i,ileaphours
-      integer, dimension(0:12)  :: monthours     = (/0,744,1416,2160,2880,3624,4344,5088,5832,6552,7296,8016,8760/)
-      logical :: IsLeap
+      integer                  :: i
+      integer                  :: ileaphours
+      integer, dimension(0:12) :: monthours     = (/0,744,1416,2160,2880,3624,4344,5088,5832,6552,7296,8016,8760/)
+      logical                  :: IsLeap
 
       INTERFACE
         logical function HS_IsLeapYear(iyear)
@@ -165,7 +166,7 @@
         stop 1
       endif
 
-      if(useLeaps)then
+      if (useLeaps) then
         ! First find out if given year is a leap year
         IsLeap = HS_IsLeapYear(iyear)
 
@@ -176,7 +177,7 @@
           if (HS_IsLeapYear(i)) ileaphours = ileaphours + 24
         enddo
       
-        ! If this is a leap year, but still in Jan or Feb, removed the
+        ! If this is a leap year, but still in Jan or Feb, remove the
         ! extra 24 hours credited above
         if (IsLeap.and.imonth.lt.3) ileaphours = ileaphours - 24
       else
@@ -246,7 +247,7 @@
 
       ! Error checking the first argument
       ! Note: this must be real*8
-      if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
+      if (HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8) then
         write(error_unit,*)"HS ERROR: HoursSince variable is either negative or larger"
         write(error_unit,*)"          than ~100,000 years."
         write(error_unit,*)"          Double-check that it was passed as real*8"
@@ -285,7 +286,7 @@
             byear_correction = -24
           endif
         else
-          ! for negative years, count from year -1 to byear
+          ! For negative years, count from year -1 to byear
           do i = byear,-1
             if (HS_IsLeapYear(i)) ileaphours = ileaphours + 24
           enddo

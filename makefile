@@ -34,9 +34,9 @@
 #    Current available options are:
 #      gfortran , ifort , aocc
 #    This variable cannot be left blank
-#      
+#
 SYSTEM = gfortran
-SYSINC = make_gfortran.inc
+SYSINC = make_$(SYSTEM).inc
 #
 #  RUN specifies which collection of compilation flags that should be run
 #    Current available options are:
@@ -48,11 +48,6 @@ SYSINC = make_gfortran.inc
 #RUN = DEBUG
 #RUN = PROF
 RUN = OPT
-#
-#    This variable cannot be left blank
-#OS = LINUX
-OS = MACOS
-#OS = WINDOWS
 
 INSTALLDIR=/opt/USGS
 
@@ -114,5 +109,4 @@ uninstall:
 	rm -f $(INSTALLDIR)/lib/$(LIB)
 	rm -f $(INSTALLDIR)/bin/HoursSince1900
 	rm -f $(INSTALLDIR)/bin/yyyymmddhh_since_1900
-
 

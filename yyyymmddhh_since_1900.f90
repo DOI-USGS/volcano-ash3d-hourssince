@@ -40,19 +40,19 @@
 
       implicit none
 
-      character (len=18)   ::  string1
-      character (len=80)   ::  linebuffer
+      character(len=18)    ::  string1
+      character(len=80)    ::  linebuffer
       integer              ::  status
       real(kind=8)         ::  HoursSince1900
       integer              ::  iyear, imonth, iday, ihour, ifraction, idoy
       real(kind=8)         ::  fraction, hour
       integer              ::  nargs
 
-      integer :: iostatus
-      character(len=120) :: iomessage
+      integer              :: iostatus
+      character(len=120)   :: iomessage
 
-      integer :: byear    = 1900
-      logical :: useLeaps = .true.
+      integer              :: byear    = 1900
+      logical              :: useLeaps = .true.
 
       INTERFACE
         subroutine HS_Get_YMDH(HoursSince,byear,useLeaps,iyear,imonth,iday,hours,idoy)
@@ -67,9 +67,9 @@
         end subroutine
       END INTERFACE
 
-      !TEST READ COMMAND LINE ARGUMENTS
+      ! Test read command line arguments
       nargs = command_argument_count()
-      if (nargs.ne.1) then
+      if(nargs.ne.1) then
         write(6,*) 'error in input to yyyymmddhh_since_1900'
         write(6,*) 'input should be a single real number.'
         write(6,*) 'program stopped'
@@ -98,7 +98,7 @@
         ihour = ihour + int(fraction)
         fraction = fraction-int(fraction)
       endif
-      ifraction = nint(fraction*60.0_8)            !turn hour fraction into minutes
+      ifraction = nint(fraction*60.0_8)            ! turn hour fraction into minutes
 
       write(string1,2) iyear, imonth, iday, ihour, ifraction
 2     format(i4,'.',i2.2,'.',i2.2,'.',2i2.2,'UTC')
