@@ -34,9 +34,9 @@
 #    Current available options are:
 #      gfortran , ifort , aocc
 #    This variable cannot be left blank
-#      
+#
 SYSTEM = gfortran
-SYSINC = make_gfortran.inc
+SYSINC = make_$(SYSTEM).inc
 #
 #  RUN specifies which collection of compilation flags that should be run
 #    Current available options are:
@@ -48,7 +48,7 @@ SYSINC = make_gfortran.inc
 #RUN = DEBUG
 #RUN = PROF
 RUN = OPT
-#
+
 INSTALLDIR=/opt/USGS
 
 ###############################################################################
@@ -92,7 +92,7 @@ yyyymmddhh_since_1900: yyyymmddhh_since_1900.f90 HoursSince.o
 testHours: testHours.f90 HoursSince.o makefile $(SYSINC)
 	$(FC) $(FFLAGS) $(EXFLAGS) $(LIBS) testHours.f90 HoursSince.o -o testHours
 check: testHours HoursSince1900 makefile $(SYSINC)
-	sh check.sh
+	bash check.sh
 
 clean:
 	rm -f *.o *__genmod.f90 *__genmod.mod
@@ -109,5 +109,4 @@ uninstall:
 	rm -f $(INSTALLDIR)/lib/$(LIB)
 	rm -f $(INSTALLDIR)/bin/HoursSince1900
 	rm -f $(INSTALLDIR)/bin/yyyymmddhh_since_1900
-
 

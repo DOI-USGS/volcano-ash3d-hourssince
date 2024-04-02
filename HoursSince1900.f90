@@ -32,6 +32,10 @@
 
       program hours_since_1900
 
+      ! This module requires Fortran 2003 or later
+      use iso_fortran_env, only : &
+         input_unit,output_unit,error_unit
+
 !     input iyear,imonth,iday,hours
       
 !     program that calculates the number of hours since 1900 of a year, month, day, and hour (UT)      
@@ -40,14 +44,16 @@
 
       implicit none
 
-      integer              :: iyear
-      integer              :: imonth
-      integer              :: iday
-      integer              :: nargs
-      character(len=80)    :: arg1, arg2, arg3, arg4
-      integer              :: status
-      real(kind=8)         :: hours
-      real(kind=8)         :: hours_out
+      integer             :: iyear
+      integer             :: imonth
+      integer             :: iday
+      integer             :: nargs
+      character(len=80)   :: arg1, arg2, arg3, arg4
+      integer             :: iostatus
+      character(len=120)  :: iomessage
+      integer             :: inlen
+      real(kind=8)        :: hours
+      real(kind=8)        :: hours_out
 
       integer :: byear    = 1900
       logical :: useLeaps = .true.
@@ -66,24 +72,52 @@
 !     TEST READ COMMAND LINE ARGUMENTS
       nargs = command_argument_count()
       if (nargs.lt.4) then
-           write(6,*) 'error in input to HoursSince1900'
-           write(6,*) 'input should be year month day hour'
-           write(6,*) 'program stopped'
-           stop 1
-         else
-           call get_command_argument(1, arg1, status)
-           call get_command_argument(2, arg2, status)
-           call get_command_argument(3, arg3, status)
-           call get_command_argument(4, arg4, status)
-           read(arg1,*) iyear
-           read(arg2,*) imonth
-           read(arg3,*) iday
-           read(arg4,*) hours
-      end if
+        write(error_unit,*) 'error in input to HoursSince1900'
+        write(error_unit,*) 'input should be year month day hour'
+        write(error_unit,*) 'program stopped'
+        stop 1
+      else
+        call get_command_argument(1, arg1, length=inlen, status=iostatus)
+        if(iostatus.ne.0)write(error_unit,*)"ERROR: could not read command-line argument (1)"
+        call get_command_argument(2, arg2, length=inlen, status=iostatus)
+        if(iostatus.ne.0)write(error_unit,*)"ERROR: could not read command-line argument (2)"
+        call get_command_argument(3, arg3, length=inlen, status=iostatus)
+        if(iostatus.ne.0)write(error_unit,*)"ERROR: could not read command-line argument (3)"
+        call get_command_argument(4, arg4, length=inlen, status=iostatus)
+        if(iostatus.ne.0)write(error_unit,*)"ERROR: could not read command-line argument (4)"
+        read(arg1,*,iostat=iostatus,iomsg=iomessage) iyear
+        if(iostatus.ne.0)then
+          write(error_unit,*)"ERROR: could not read comand-line argument (1)"
+          write(error_unit,*)" iyear = ",iyear
+          write(error_unit,*)iomessage
+          stop 1
+        endif
+        read(arg2,*,iostat=iostatus,iomsg=iomessage) imonth
+        if(iostatus.ne.0)then
+          write(error_unit,*)"ERROR: could not read comand-line argument (1)"
+          write(error_unit,*)" imonth = ",imonth
+          write(error_unit,*)iomessage
+          stop 1
+        endif
+        read(arg3,*,iostat=iostatus,iomsg=iomessage) iday
+        if(iostatus.ne.0)then
+          write(error_unit,*)"ERROR: could not read comand-line argument (1)"
+          write(error_unit,*)" iday = ",iday
+          write(error_unit,*)iomessage
+          stop 1
+        endif
+        read(arg4,*,iostat=iostatus,iomsg=iomessage) hours
+        if(iostatus.ne.0)then
+          write(error_unit,*)"ERROR: could not read comand-line argument (1)"
+          write(error_unit,*)" hours = ",hours
+          write(error_unit,*)iomessage
+          stop 1
+        endif
+      endif
 
       hours_out = HS_hours_since_baseyear(iyear,imonth,iday,hours,byear,useLeaps)
 
-      write(6,'(f12.2)') hours_out
+      write(output_unit,'(f12.2)') hours_out
 
       end program hours_since_1900
 

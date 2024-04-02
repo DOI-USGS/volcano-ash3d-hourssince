@@ -89,6 +89,10 @@
 
       function HS_hours_since_baseyear(iyear,imonth,iday,hours,byear,useLeaps)
 
+      ! This module requires Fortran 2003 or later
+      use iso_fortran_env, only : &
+         error_unit
+
       implicit none
 
       integer     ,intent(in) :: iyear
@@ -98,11 +102,12 @@
       integer     ,intent(in) :: byear
       logical     ,intent(in) :: useLeaps
 
-      real(kind=8)       :: HS_hours_since_baseyear
+      real(kind=8)             :: HS_hours_since_baseyear
                                    !cumulative hours in each month
-      integer            :: i,ileaphours
-      integer, dimension(0:12)  :: monthours     = (/0,744,1416,2160,2880,3624,4344,5088,5832,6552,7296,8016,8760/)
-      logical :: IsLeap
+      integer                  :: i
+      integer                  :: ileaphours
+      integer, dimension(0:12) :: monthours     = (/0,744,1416,2160,2880,3624,4344,5088,5832,6552,7296,8016,8760/)
+      logical                  :: IsLeap
 
       INTERFACE
         logical function HS_IsLeapYear(iyear)
@@ -110,25 +115,24 @@
         end function HS_IsLeapYear
       END INTERFACE
 
-
       ! First check input values
       if (iyear.lt.byear) then
-        write(0,*)"HS ERROR: HS_hours_since_baseyear"
-        write(0,*)"HS ERROR:  year must be greater or equal to base year."
-        write(0,*)"      Base Year = ",byear
-        write(0,*)"     Input Year = ",iyear
+        write(error_unit,*)"HS ERROR: HS_hours_since_baseyear"
+        write(error_unit,*)"HS ERROR:  year must be greater or equal to base year."
+        write(error_unit,*)"      Base Year = ",byear
+        write(error_unit,*)"     Input Year = ",iyear
         stop 1
       endif
       if (imonth.lt.1.or.imonth.gt.12) then
-        write(0,*)"HS ERROR: HS_hours_since_baseyear"
-        write(0,*)"HS ERROR:  month must be between 1 and 12."
-        write(0,*)"     Input Month = ",imonth
+        write(error_unit,*)"HS ERROR: HS_hours_since_baseyear"
+        write(error_unit,*)"HS ERROR:  month must be between 1 and 12."
+        write(error_unit,*)"     Input Month = ",imonth
         stop 1
       endif
       if (iday.lt.1) then
-        write(0,*)"HS ERROR: HS_hours_since_baseyear"
-        write(0,*)"HS ERROR:  day must be greater than 0."
-        write(0,*)"     Input Day = ",iday
+        write(error_unit,*)"HS ERROR: HS_hours_since_baseyear"
+        write(error_unit,*)"HS ERROR:  day must be greater than 0."
+        write(error_unit,*)"     Input Day = ",iday
         stop 1
       endif
       if ((imonth.eq.1.or.&
@@ -138,31 +142,31 @@
            imonth.eq.8.or.&
            imonth.eq.10.or.&
            imonth.eq.12).and.iday.gt.31)then
-        write(0,*)"HS ERROR: HS_hours_since_baseyear"
-        write(0,*)"HS ERROR:  day must be <= 31 for this month."
-        write(0,*)"     Input Month = ",imonth
-        write(0,*)"     Input Day = ",iday
+        write(error_unit,*)"HS ERROR: HS_hours_since_baseyear"
+        write(error_unit,*)"HS ERROR:  day must be <= 31 for this month."
+        write(error_unit,*)"     Input Month = ",imonth
+        write(error_unit,*)"     Input Day = ",iday
         stop 1
       endif
       if ((imonth.eq.4.or.&
            imonth.eq.6.or.&
            imonth.eq.9.or.&
            imonth.eq.11).and.iday.gt.30)then
-        write(0,*)"HS ERROR: HS_hours_since_baseyear"
-        write(0,*)"HS ERROR:  day must be <= 30 for this month."
-        write(0,*)"     Input Month = ",imonth
-        write(0,*)"     Input Day = ",iday 
+        write(error_unit,*)"HS ERROR: HS_hours_since_baseyear"
+        write(error_unit,*)"HS ERROR:  day must be <= 30 for this month."
+        write(error_unit,*)"     Input Month = ",imonth
+        write(error_unit,*)"     Input Day = ",iday 
         stop 1
       endif
       if ((imonth.eq.2).and.iday.gt.29)then
-        write(0,*)"HS ERROR: HS_hours_since_baseyear"
-        write(0,*)"HS ERROR:  day must be <= 29 for this month."
-        write(0,*)"     Input Month = ",imonth
-        write(0,*)"     Input Day = ",iday
+        write(error_unit,*)"HS ERROR: HS_hours_since_baseyear"
+        write(error_unit,*)"HS ERROR:  day must be <= 29 for this month."
+        write(error_unit,*)"     Input Month = ",imonth
+        write(error_unit,*)"     Input Day = ",iday
         stop 1
       endif
 
-      if(useLeaps)then
+      if (useLeaps) then
         ! First find out if given year is a leap year
         IsLeap = HS_IsLeapYear(iyear)
 
@@ -173,7 +177,7 @@
           if (HS_IsLeapYear(i)) ileaphours = ileaphours + 24
         enddo
       
-        ! If this is a leap year, but still in Jan or Feb, removed the
+        ! If this is a leap year, but still in Jan or Feb, remove the
         ! extra 24 hours credited above
         if (IsLeap.and.imonth.lt.3) ileaphours = ileaphours - 24
       else
@@ -201,6 +205,10 @@
 !##############################################################################
 
       subroutine HS_Get_YMDH(HoursSince,byear,useLeaps,iyear,imonth,iday,hours,idoy)
+
+      ! This module requires Fortran 2003 or later
+      use iso_fortran_env, only : &
+         error_unit
 
       implicit none
 
@@ -239,10 +247,10 @@
 
       ! Error checking the first argument
       ! Note: this must be real*8
-      if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
-        write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
-        write(0,*)"          than ~100,000 years."
-        write(0,*)"          Double-check that it was passed as real*8"
+      if (HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8) then
+        write(error_unit,*)"HS ERROR: HoursSince variable is either negative or larger"
+        write(error_unit,*)"          than ~100,000 years."
+        write(error_unit,*)"          Double-check that it was passed as real*8"
         stop 1
       endif
 
@@ -278,7 +286,7 @@
             byear_correction = -24
           endif
         else
-          ! for negative years, count from year -1 to byear
+          ! For negative years, count from year -1 to byear
           do i = byear,-1
             if (HS_IsLeapYear(i)) ileaphours = ileaphours + 24
           enddo
@@ -388,7 +396,11 @@
 !##############################################################################
 
       function HS_xmltime(HoursSince,byear,useLeaps)
-      
+
+      ! This module requires Fortran 2003 or later
+      use iso_fortran_env, only : &
+         error_unit
+
       implicit none
 
       real(kind=8)      ,intent(in) :: HoursSince
@@ -418,9 +430,9 @@
       ! Error checking the first argument
       ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
-        write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
-        write(0,*)"          than ~100,000 years."
-        write(0,*)"          Double-check that it was passed as real*8"
+        write(error_unit,*)"HS ERROR: HoursSince variable is either negative or larger"
+        write(error_unit,*)"          than ~100,000 years."
+        write(error_unit,*)"          Double-check that it was passed as real*8"
         stop 1
       endif
 
@@ -450,7 +462,11 @@
 !##############################################################################
 
       function HS_yyyymmddhhmm_since(HoursSince,byear,useLeaps)
-      
+
+      ! This module requires Fortran 2003 or later
+      use iso_fortran_env, only : &
+         error_unit
+
       implicit none
 
       real(kind=8)   ,intent(in) ::  HoursSince
@@ -482,9 +498,9 @@
       ! Error checking the first argument
       ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
-        write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
-        write(0,*)"          than ~100,000 years."
-        write(0,*)"          Double-check that it was passed as real*8"
+        write(error_unit,*)"HS ERROR: HoursSince variable is either negative or larger"
+        write(error_unit,*)"          than ~100,000 years."
+        write(error_unit,*)"          Double-check that it was passed as real*8"
         stop 1
       endif
 
@@ -513,7 +529,11 @@
 !##############################################################################
 
       function HS_yyyymmddhh_since(HoursSince,byear,useLeaps)
-      
+
+      ! This module requires Fortran 2003 or later
+      use iso_fortran_env, only : &
+         error_unit
+
       implicit none
 
       real(kind=8),intent(in)    ::  HoursSince
@@ -545,9 +565,9 @@
       ! Error checking the first argument
       ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
-        write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
-        write(0,*)"          than ~100,000 years."
-        write(0,*)"          Double-check that it was passed as real*8"
+        write(error_unit,*)"HS ERROR: HoursSince variable is either negative or larger"
+        write(error_unit,*)"          than ~100,000 years."
+        write(error_unit,*)"          Double-check that it was passed as real*8"
         stop 1
       endif
 
@@ -586,6 +606,10 @@
 
       function HS_DayOfYear(HoursSince,byear,useLeaps)
 
+      ! This module requires Fortran 2003 or later
+      use iso_fortran_env, only : &
+         error_unit
+
       implicit none
 
       real(kind=8),intent(in) :: HoursSince
@@ -613,9 +637,9 @@
       ! Error checking the first argument
       ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
-        write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
-        write(0,*)"          than ~100,000 years."
-        write(0,*)"          Double-check that it was passed as real*8"
+        write(error_unit,*)"HS ERROR: HoursSince variable is either negative or larger"
+        write(error_unit,*)"          than ~100,000 years."
+        write(error_unit,*)"          Double-check that it was passed as real*8"
         stop 1
       endif
 
@@ -637,6 +661,10 @@
 !##############################################################################
 
       function HS_HourOfDay(HoursSince,byear,useLeaps)
+
+      ! This module requires Fortran 2003 or later
+      use iso_fortran_env, only : &
+         error_unit
 
       implicit none
 
@@ -665,9 +693,9 @@
       ! Error checking the first argument
       ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
-        write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
-        write(0,*)"          than ~100,000 years."
-        write(0,*)"          Double-check that it was passed as real*8"
+        write(error_unit,*)"HS ERROR: HoursSince variable is either negative or larger"
+        write(error_unit,*)"          than ~100,000 years."
+        write(error_unit,*)"          Double-check that it was passed as real*8"
         stop 1
       endif
 
@@ -689,6 +717,10 @@
 !##############################################################################
 
       function HS_YearOfEvent(HoursSince,byear,useLeaps)
+
+      ! This module requires Fortran 2003 or later
+      use iso_fortran_env, only : &
+         error_unit
 
       implicit none
 
@@ -717,9 +749,9 @@
       ! Error checking the first argument
       ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
-        write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
-        write(0,*)"          than ~100,000 years."
-        write(0,*)"          Double-check that it was passed as real*8"
+        write(error_unit,*)"HS ERROR: HoursSince variable is either negative or larger"
+        write(error_unit,*)"          than ~100,000 years."
+        write(error_unit,*)"          Double-check that it was passed as real*8"
         stop 1
       endif
 
@@ -741,6 +773,10 @@
 !##############################################################################
 
       function HS_MonthOfEvent(HoursSince,byear,useLeaps)
+
+      ! This module requires Fortran 2003 or later
+      use iso_fortran_env, only : &
+         error_unit
 
       implicit none
 
@@ -769,9 +805,9 @@
       ! Error checking the first argument
       ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
-        write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
-        write(0,*)"          than ~100,000 years."
-        write(0,*)"          Double-check that it was passed as real*8"
+        write(error_unit,*)"HS ERROR: HoursSince variable is either negative or larger"
+        write(error_unit,*)"          than ~100,000 years."
+        write(error_unit,*)"          Double-check that it was passed as real*8"
         stop 1
       endif
 
@@ -793,6 +829,10 @@
 !##############################################################################
 
       function HS_DayOfEvent(HoursSince,byear,useLeaps)
+
+      ! This module requires Fortran 2003 or later
+      use iso_fortran_env, only : &
+         error_unit
 
       implicit none
 
@@ -821,9 +861,9 @@
       ! Error checking the first argument
       ! Note: this must be real*8
       if(HoursSince.lt.0.0_8.or.HoursSince.gt.1.0e9_8)then
-        write(0,*)"HS ERROR: HoursSince variable is either negative or larger"
-        write(0,*)"          than ~100,000 years."
-        write(0,*)"          Double-check that it was passed as real*8"
+        write(error_unit,*)"HS ERROR: HoursSince variable is either negative or larger"
+        write(error_unit,*)"          than ~100,000 years."
+        write(error_unit,*)"          Double-check that it was passed as real*8"
         stop 1
       endif
 

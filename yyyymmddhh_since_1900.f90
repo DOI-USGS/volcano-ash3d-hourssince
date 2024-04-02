@@ -40,16 +40,19 @@
 
       implicit none
 
-      character (len=18)   ::  string1
-      character (len=80)   ::  linebuffer
+      character(len=18)    ::  string1
+      character(len=80)    ::  linebuffer
       integer              ::  status
       real(kind=8)         ::  HoursSince1900
       integer              ::  iyear, imonth, iday, ihour, ifraction, idoy
       real(kind=8)         ::  fraction, hour
       integer              ::  nargs
 
-      integer :: byear    = 1900
-      logical :: useLeaps = .true.
+      integer              :: iostatus
+      character(len=120)   :: iomessage
+
+      integer              :: byear    = 1900
+      logical              :: useLeaps = .true.
 
       INTERFACE
         subroutine HS_Get_YMDH(HoursSince,byear,useLeaps,iyear,imonth,iday,hours,idoy)
@@ -64,16 +67,25 @@
         end subroutine
       END INTERFACE
 
-      !TEST READ COMMAND LINE ARGUMENTS
+      ! Test read command line arguments
       nargs = command_argument_count()
-      if (nargs.ne.1) then
+      if(nargs.ne.1) then
         write(6,*) 'error in input to yyyymmddhh_since_1900'
         write(6,*) 'input should be a single real number.'
         write(6,*) 'program stopped'
         stop
       else
         call get_command_argument(1, linebuffer, status)
-        read(linebuffer,*) HoursSince1900
+        read(linebuffer,*,iostat=iostatus,iomsg=iomessage) HoursSince1900
+        if(iostatus.ne.0)then
+          write(6,*)'HS ERROR:  Error reading value from command-line argument'
+          write(6,*)'           Expecting to read: HoursSince1900 (real*8)'
+          write(6,*)'           From the following input line : '
+          write(6,*)linebuffer
+          write(6,*)'HS System Message: '
+          write(6,*)iomessage
+          stop 1
+        endif
       endif
 
       call HS_Get_YMDH(HoursSince1900,byear,useLeaps,iyear,imonth,iday,hour,idoy)
@@ -86,7 +98,7 @@
         ihour = ihour + int(fraction)
         fraction = fraction-int(fraction)
       endif
-      ifraction = nint(fraction*60.0_8)            !turn hour fraction into minutes
+      ifraction = nint(fraction*60.0_8)            ! turn hour fraction into minutes
 
       write(string1,2) iyear, imonth, iday, ihour, ifraction
 2     format(i4,'.',i2.2,'.',i2.2,'.',2i2.2,'UTC')
