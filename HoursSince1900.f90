@@ -87,28 +87,28 @@
         if(iostatus.ne.0)write(error_unit,*)"ERROR: could not read command-line argument (4)"
         read(arg1,*,iostat=iostatus,iomsg=iomessage) iyear
         if(iostatus.ne.0)then
-          write(error_unit,*)"ERROR: could not read comand-line argument (1)"
+          write(error_unit,*)"ERROR: could not read command-line argument (1)"
           write(error_unit,*)" iyear = ",iyear
           write(error_unit,*)iomessage
           stop 1
         endif
         read(arg2,*,iostat=iostatus,iomsg=iomessage) imonth
         if(iostatus.ne.0)then
-          write(error_unit,*)"ERROR: could not read comand-line argument (1)"
+          write(error_unit,*)"ERROR: could not read command-line argument (1)"
           write(error_unit,*)" imonth = ",imonth
           write(error_unit,*)iomessage
           stop 1
         endif
         read(arg3,*,iostat=iostatus,iomsg=iomessage) iday
         if(iostatus.ne.0)then
-          write(error_unit,*)"ERROR: could not read comand-line argument (1)"
+          write(error_unit,*)"ERROR: could not read command-line argument (1)"
           write(error_unit,*)" iday = ",iday
           write(error_unit,*)iomessage
           stop 1
         endif
         read(arg4,*,iostat=iostatus,iomsg=iomessage) hours
         if(iostatus.ne.0)then
-          write(error_unit,*)"ERROR: could not read comand-line argument (1)"
+          write(error_unit,*)"ERROR: could not read command-line argument (1)"
           write(error_unit,*)" hours = ",hours
           write(error_unit,*)iomessage
           stop 1
