@@ -7,9 +7,11 @@
 
       integer            :: i
 
-      integer            :: iyear,imonth
-      integer            :: iday, idoy
-      real(kind=8)       :: hours
+      integer            :: iyear  = 0
+      integer            :: imonth = 0
+      integer            :: iday   = 0
+      integer            :: idoy   = 0
+      real(kind=8)       :: hours  = 0.0_8
       integer            :: byear    = 1000
       logical            :: useLeaps = .true.
 

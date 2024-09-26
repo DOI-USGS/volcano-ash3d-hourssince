@@ -40,16 +40,21 @@
 
       implicit none
 
-      character(len=18)    ::  string1
-      character(len=80)    ::  linebuffer
-      integer              ::  status
-      real(kind=8)         ::  HoursSince1900
-      integer              ::  iyear, imonth, iday, ihour, ifraction, idoy
-      real(kind=8)         ::  fraction, hour
-      integer              ::  nargs
+      character(len=18)    :: string1
+      character(len=80)    :: linebuffer
+      real(kind=8)         :: HoursSince1900
+      integer              :: iyear  = 0
+      integer              :: imonth = 0
+      integer              :: iday   = 0
+      integer              :: ihour  = 0
+      integer              :: ifraction
+      integer              :: idoy   = 0
+      real(kind=8)         :: fraction
+      real(kind=8)         :: hour   = 0.0_8
+      integer              :: nargs
 
       integer              :: iostatus
-      character(len=120)   :: iomessage
+      character(len=120)   :: iomessage = ""
 
       integer              :: byear    = 1900
       logical              :: useLeaps = .true.
@@ -75,7 +80,7 @@
         write(6,*) 'program stopped'
         stop
       else
-        call get_command_argument(1, linebuffer, status)
+        call get_command_argument(number=1, value=linebuffer, status=iostatus)
         read(linebuffer,*,iostat=iostatus,iomsg=iomessage) HoursSince1900
         if(iostatus.ne.0)then
           write(6,*)'HS ERROR:  Error reading value from command-line argument'

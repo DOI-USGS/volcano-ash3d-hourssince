@@ -44,13 +44,13 @@
 
       implicit none
 
-      integer             :: iyear
-      integer             :: imonth
-      integer             :: iday
+      integer             :: iyear   = 0
+      integer             :: imonth  = 0
+      integer             :: iday    = 0
       integer             :: nargs
       character(len=80)   :: arg1, arg2, arg3, arg4
       integer             :: iostatus
-      character(len=120)  :: iomessage
+      character(len=120)  :: iomessage = ""
       integer             :: inlen
       real(kind=8)        :: hours
       real(kind=8)        :: hours_out
@@ -77,13 +77,13 @@
         write(error_unit,*) 'program stopped'
         stop 1
       else
-        call get_command_argument(1, arg1, length=inlen, status=iostatus)
+        call get_command_argument(number=1, value=arg1, length=inlen, status=iostatus)
         if(iostatus.ne.0)write(error_unit,*)"ERROR: could not read command-line argument (1)"
-        call get_command_argument(2, arg2, length=inlen, status=iostatus)
+        call get_command_argument(number=2, value=arg2, length=inlen, status=iostatus)
         if(iostatus.ne.0)write(error_unit,*)"ERROR: could not read command-line argument (2)"
-        call get_command_argument(3, arg3, length=inlen, status=iostatus)
+        call get_command_argument(number=3, value=arg3, length=inlen, status=iostatus)
         if(iostatus.ne.0)write(error_unit,*)"ERROR: could not read command-line argument (3)"
-        call get_command_argument(4, arg4, length=inlen, status=iostatus)
+        call get_command_argument(number=4, value=arg4, length=inlen, status=iostatus)
         if(iostatus.ne.0)write(error_unit,*)"ERROR: could not read command-line argument (4)"
         read(arg1,*,iostat=iostatus,iomsg=iomessage) iyear
         if(iostatus.ne.0)then
