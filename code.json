@@ -4,7 +4,7 @@
     "organization": "U.S. Geological Survey",
     "description": "HoursSince is a collection of functions and subroutines that calculate the number of hours of a given calendar date from Jan. 1 of a reference year.",
     "version": "1.0.0",
-    "status": "Release Candidate",
+    "status": "Development",
 
     "permissions": {
       "usageType": "openSource",
