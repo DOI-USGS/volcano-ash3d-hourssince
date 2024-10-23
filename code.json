@@ -3,9 +3,52 @@
     "name": "hourssince",
     "organization": "U.S. Geological Survey",
     "description": "HoursSince is a collection of functions and subroutines that calculate the number of hours of a given calendar date from Jan. 1 of a reference year.",
-    "version": "1.0.0",
+    "version": "master",
     "status": "Development",
 
+    "permissions": {
+      "usageType": "openSource",
+      "licenses": [
+        {
+          "name": "Public Domain, CC0-1.0",
+          "URL": "https://code.usgs.gov/vsc/ash3d/volcano-ash3d-hourssince/-/raw/master/LICENSE.md"
+        }
+      ]
+    },
+
+    "homepageURL": "https://code.usgs.gov/vsc/ash3d/volcano-ash3d-hourssince/",
+    "downloadURL": "https://code.usgs.gov/vsc/ash3d/volcano-ash3d-hourssince/-/archive/master/volcano-ash3d-hourssince-master.zip",
+    "disclaimerURL": "https://code.usgs.gov/vsc/ash3d/volcano-ash3d-hourssince/-/raw/master/DISCLAIMER.md",
+    "repositoryURL": "https://code.usgs.gov/vsc/ash3d/volcano-ash3d-hourssince.git",
+    "vcs": "git",
+
+    "laborHours": 0,
+
+    "tags": [
+      "USGS",
+      "Ash3d",
+      "AVOG2S"
+    ],
+
+    "languages": [
+      "fortran"
+    ],
+
+    "contact": {
+      "name": "Hans F. Schwaiger",
+      "email": "hschwaiger@usgs.gov"
+    },
+
+    "date": {
+      "metadataLastUpdated": "2024-10-22"
+    }
+  },
+  {
+    "name": "hourssince",
+    "organization": "U.S. Geological Survey",
+    "description": "HoursSince is a collection of functions and subroutines that calculate the number of hours of a given calendar date from Jan. 1 of a reference year.",
+    "version": "1.0.0",
+    "status": "Production",
     "permissions": {
       "usageType": "openSource",
       "licenses": [
@@ -40,7 +83,7 @@
     },
 
     "date": {
-      "metadataLastUpdated": "2024-07-25"
+      "metadataLastUpdated": "2024-10-22"
     }
   }
 ]
